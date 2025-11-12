@@ -14,6 +14,7 @@ from src.app.schemas import (
 )
 from src.core.exceptions import ProductAlreadyExists, ProductNotFound
 from src.core.use_cases.add_product import AddProductUseCase
+from src.core.use_cases.update_product import UpdateProductUseCase
 from src.core.use_cases.delete_product import DeleteProductUseCase
 from src.core.use_cases.get_product import GetProductUseCase
 from src.core.use_cases.list_products import ListProductsUseCase
@@ -27,6 +28,7 @@ produto_tag = Tag(
 def register_product_routes(
     app,
     add_use_case: AddProductUseCase,
+    update_use_case: UpdateProductUseCase,
     list_use_case: ListProductsUseCase,
     get_use_case: GetProductUseCase,
     delete_use_case: DeleteProductUseCase,
@@ -50,6 +52,26 @@ def register_product_routes(
             return {"mesage": str(error)}, 409
         except Exception:
             return {"mesage": "Não foi possível salvar novo item :/"}, 400
+
+    @app.put(
+        "/produto",
+        tags=[produto_tag],
+        responses={
+            "200": ProdutoViewSchema,
+            "409": ErrorSchema,
+            "400": ErrorSchema,
+        },
+    )
+    def update_produto(form: ProdutoSchema):
+        try:
+            produto = update_use_case.execute(
+                form.nome, form.quantidade, form.valor
+            )
+            return apresenta_produto(produto), 200
+        except ProductNotFound as error:
+            return {"mesage": str(error)}, 409
+        except Exception:
+            return {"mesage": "Não foi possível atualizar novo item :/"}, 400
 
     @app.get(
         "/produtos",

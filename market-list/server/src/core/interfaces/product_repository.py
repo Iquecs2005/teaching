@@ -15,6 +15,10 @@ class ProductRepository(ABC):
         """Persist a product and return the stored instance."""
 
     @abstractmethod
+    def update(self, oldName, newProductValues: Product) -> Product:
+        """Persist a product and return the stored instance."""
+
+    @abstractmethod
     def list_all(self) -> List[Product]:
         """Return all stored products."""
 

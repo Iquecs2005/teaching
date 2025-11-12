@@ -38,6 +38,27 @@ class SqlAlchemyProductRepository(ProductRepository):
         finally:
             session.close()
 
+    def update(self, newProductValues: Product) -> Product:
+        session = self._session_factory()
+        try:
+            bd_product = (
+                session.query(ProductModel)
+                .filter(ProductModel.nome == newProductValues.nome)
+                .first()
+            )
+            if bd_product is None:
+                return None
+            bd_product.quantidade = newProductValues.quantidade
+            bd_product.valor = newProductValues.valor
+            session.commit()
+            session.refresh(bd_product)  # refresh to get updated state from DB
+            return bd_product
+        except Exception:
+            session.rollback()
+            raise
+        finally:
+            session.close()
+
     def list_all(self) -> List[Product]:
         session = self._session_factory()
         try:

@@ -57,13 +57,18 @@ const postItem = async (inputProduct, inputQuantity, inputPrice) => {
   Função para criar um botão close para cada item da lista
   --------------------------------------------------------------------------------------
 */
-const insertButton = (parent) => {
+const insertButton = (parent, className) => {
   let span = document.createElement("span");
-  let txt = document.createTextNode("\u00D7");
-  span.className = "close";
+  let txt;
+  if (className == "edit")
+    txt = document.createTextNode("\u270E");
+  else
+    txt = document.createTextNode("\u00D7");
+  span.className = className;
   span.appendChild(txt);
   parent.appendChild(span);
 }
+
 
 
 /*
@@ -88,6 +93,37 @@ const removeElement = () => {
   }
 }
 
+const confirmUpdate = (button) => {
+  let div = button.parentElement.parentElement;
+  const nomeItem = div.getElementsByTagName('td')[0].innerHTML
+
+  const formData = new FormData();
+  formData.append('nome', nomeItem);
+  formData.append('quantidade', prompt("New Qtd"));
+  formData.append('valor', prompt("New Value"));
+
+  let url = 'http://127.0.0.1:5000/produto';
+  fetch(url, {
+    method: 'put',
+    body: formData
+  })
+    .then((response) => response.json())
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+}
+
+const enableUpdateElement = () => {
+  let edit = document.getElementsByClassName("edit");
+  // var table = document.getElementById('myTable');
+  let i;
+  for (i = 0; i < edit.length; i++) {
+    edit[i].onclick = function () {
+      confirmUpdate(this);
+    }
+  }
+}
+
 /*
   --------------------------------------------------------------------------------------
   Função para deletar um item da lista do servidor via requisição DELETE
@@ -98,6 +134,18 @@ const deleteItem = (item) => {
   let url = 'http://127.0.0.1:5000/produto?nome=' + item;
   fetch(url, {
     method: 'delete'
+  })
+    .then((response) => response.json())
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+}
+
+const updateItem = (item) => {
+  console.log(item)
+  let url = 'http://127.0.0.1:5000/produto?nome=' + item;
+  fetch(url, {
+    method: 'put'
   })
     .then((response) => response.json())
     .catch((error) => {
@@ -140,10 +188,12 @@ const insertList = (nameProduct, quantity, price) => {
     var cel = row.insertCell(i);
     cel.textContent = item[i];
   }
-  insertButton(row.insertCell(-1))
+  insertButton(row.insertCell(-1), "edit")
+  insertButton(row.insertCell(-1), "close")
   document.getElementById("newInput").value = "";
   document.getElementById("newQuantity").value = "";
   document.getElementById("newPrice").value = "";
 
   removeElement()
+  enableUpdateElement()
 }
