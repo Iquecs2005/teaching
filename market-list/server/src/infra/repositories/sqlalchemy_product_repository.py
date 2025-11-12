@@ -38,16 +38,17 @@ class SqlAlchemyProductRepository(ProductRepository):
         finally:
             session.close()
 
-    def update(self, newProductValues: Product) -> Product:
+    def update(self, oldName, newProductValues: Product) -> Product:
         session = self._session_factory()
         try:
             bd_product = (
                 session.query(ProductModel)
-                .filter(ProductModel.nome == newProductValues.nome)
+                .filter(ProductModel.nome == oldName)
                 .first()
             )
             if bd_product is None:
                 return None
+            bd_product.nome = newProductValues.nome
             bd_product.quantidade = newProductValues.quantidade
             bd_product.valor = newProductValues.valor
             session.commit()

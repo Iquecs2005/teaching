@@ -12,16 +12,18 @@ class UpdateProductUseCase(UseCase):
         self._repository = repository
 
     def execute(
-        self, nome, quantidade: Optional[int], valor: Optional[float]
+        self, nomeAntigo, nome: Optional[str], quantidade: Optional[int], valor: Optional[float]
     ) -> Product:
-        foundProduct = self._repository.get_by_name(nome)
+        foundProduct = self._repository.get_by_name(nomeAntigo)
         if not foundProduct:
-            raise ProductNotFound(f"Produto '{nome}' não encontrado.")
+            raise ProductNotFound(f"Produto '{nomeAntigo}' não encontrado.")
 
+        if nome is None:
+            nome = nomeAntigo
         if quantidade is None:
             quantidade = foundProduct.quantidade
         if valor is None:
             valor = foundProduct.valor
 
         product = Product(nome=nome, quantidade=quantidade, valor=valor)
-        return self._repository.update(product)
+        return self._repository.update(nomeAntigo, product)

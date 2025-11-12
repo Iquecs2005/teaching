@@ -12,6 +12,13 @@ class ProdutoSchema(BaseModel):
     quantidade: Optional[int] = None
     valor: float
 
+class UpdateProdutoSchema(BaseModel):
+    """Payload esperado para criação de produtos."""
+
+    nomeAntigo: str
+    nome: str
+    quantidade: Optional[int] = None
+    valor: float
 
 class ProdutoBuscaSchema(BaseModel):
     """Estrutura de busca por produto usando o identificador."""

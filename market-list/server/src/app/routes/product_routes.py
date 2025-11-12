@@ -8,6 +8,7 @@ from src.app.schemas import (
     ProdutoBuscaSchema,
     ProdutoDelSchema,
     ProdutoSchema,
+    UpdateProdutoSchema,
     ProdutoViewSchema,
     apresenta_produto,
     apresenta_produtos,
@@ -42,7 +43,7 @@ def register_product_routes(
             "400": ErrorSchema,
         },
     )
-    def add_produto(form: ProdutoSchema):
+    def add_produto(form: UpdateProdutoSchema):
         try:
             produto = add_use_case.execute(
                 form.nome, form.quantidade, form.valor
@@ -62,10 +63,10 @@ def register_product_routes(
             "400": ErrorSchema,
         },
     )
-    def update_produto(form: ProdutoSchema):
+    def update_produto(form: UpdateProdutoSchema):
         try:
             produto = update_use_case.execute(
-                form.nome, form.quantidade, form.valor
+                nomeAntigo=form.nomeAntigo, nome=form.nome, quantidade=form.quantidade, valor=form.valor
             )
             return apresenta_produto(produto), 200
         except ProductNotFound as error:

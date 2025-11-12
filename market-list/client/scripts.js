@@ -95,12 +95,20 @@ const removeElement = () => {
 
 const confirmUpdate = (button) => {
   let div = button.parentElement.parentElement;
-  const nomeItem = div.getElementsByTagName('td')[0].innerHTML
+  let divElements = div.getElementsByTagName('td')
+  const nomeItem = divElements[0].innerHTML
+
+  let novo_produto = {"nome": prompt("New Nome"), "qtd": prompt("New Qtd"), "valor": prompt("New Value")}
 
   const formData = new FormData();
-  formData.append('nome', nomeItem);
-  formData.append('quantidade', prompt("New Qtd"));
-  formData.append('valor', prompt("New Value"));
+  formData.append('nomeAntigo', nomeItem);
+  formData.append('nome', novo_produto.nome);
+  formData.append('quantidade', novo_produto.qtd);
+  formData.append('valor', novo_produto.valor);
+
+  divElements[0].innerHTML = novo_produto.nome;
+  divElements[1].innerHTML = novo_produto.qtd;
+  divElements[2].innerHTML = novo_produto.valor;
 
   let url = 'http://127.0.0.1:5000/produto';
   fetch(url, {
@@ -134,18 +142,6 @@ const deleteItem = (item) => {
   let url = 'http://127.0.0.1:5000/produto?nome=' + item;
   fetch(url, {
     method: 'delete'
-  })
-    .then((response) => response.json())
-    .catch((error) => {
-      console.error('Error:', error);
-    });
-}
-
-const updateItem = (item) => {
-  console.log(item)
-  let url = 'http://127.0.0.1:5000/produto?nome=' + item;
-  fetch(url, {
-    method: 'put'
   })
     .then((response) => response.json())
     .catch((error) => {
