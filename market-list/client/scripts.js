@@ -100,6 +100,19 @@ const confirmUpdate = (button) => {
 
   let novo_produto = {"nome": prompt("New Nome"), "qtd": prompt("New Qtd"), "valor": prompt("New Value")}
 
+  if (novo_produto.nome === "")
+  {
+    novo_produto.nome = nomeItem
+  }
+  if (novo_produto.qtd === "")
+  {
+    novo_produto.qtd = divElements[1].innerHTML
+  }
+  if (novo_produto.valor === "")
+  {
+    novo_produto.valor = divElements[2].innerHTML
+  }
+
   const formData = new FormData();
   formData.append('nomeAntigo', nomeItem);
   formData.append('nome', novo_produto.nome);
